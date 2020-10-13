@@ -1,0 +1,21 @@
+#!/bin/sh
+# This script is invoked by zcip.
+
+probePPP0Gateway () {
+	route | grep default | grep UG | grep -q ppp0
+}
+
+case $1 in
+  init)
+	exit 0
+  ;;
+  config)
+    echo "Get AUTO IP = ["  $ip  "]; "
+    echo "ip=\""$ip"\"" > /tmp/autoip 
+    echo "interface=\""$interface"\"" >> /tmp/autoip
+    /sbin/ifconfig $interface $ip netmask 255.255.0.0
+    probePPP0Gateway || /sbin/route add default gw 169.254.0.1
+  ;;
+  deconfig)
+  ;;
+esac
